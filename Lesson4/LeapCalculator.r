@@ -1,5 +1,6 @@
 # Leap year calculator
 # Author: Dainius Masiliunas, team Rython
+# Date: 7th of January, 2016
 # License: Apache License 2.0
 
 # Source functions

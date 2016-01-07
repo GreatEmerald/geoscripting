@@ -1,5 +1,7 @@
 base::::file:///home/dainius/git/geoscripting/Lesson4
 help::::rkward://page/rkward_welcome
+script::::file:///home/dainius/git/geoscripting/Lesson4/LeapCalculator.r
+script::::file:///home/dainius/git/geoscripting/Lesson4/src/leap.r
 workspace::sidebar,0::
 commandlog::sidebar,3::
 filebrowser::sidebar,0::

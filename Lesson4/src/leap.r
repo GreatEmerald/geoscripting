@@ -1,5 +1,6 @@
 # Leap year calculator functions
 # Author: Dainius Masiliunas, team Rython
+# Date: 7th of January, 2016
 # License: Apache License 2.0
 
 # Calculates whether the year entered is a leap year or not.
