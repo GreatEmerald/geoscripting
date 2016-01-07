@@ -7,4 +7,4 @@ In addition, my preffered directory structure and coding standards are slightly 
 I will always use `=` for assigning instead of `<-`, and curly braces will always be on their own lines. The directory for R functions will 
 be called "src" for source.
 
-To open the projects in RStudio, import the `.RData` file (or use RKWard and open the `.rkworkspace` file).
+To open the projects in RStudio, open (double-click) the `.RData` file with RStudio (or use RKWard and open the `.rkworkspace` file).
