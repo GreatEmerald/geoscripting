@@ -1,5 +1,14 @@
 base::::file:///home/dainius/git/geoscripting/Lesson6
 help::::rkward://page/rkward_welcome
+output::::file:///home/dainius/.rkward/rk_out.html
+script::::file:///home/dainius/git/geoscripting/Lesson6/main.r
+help::::rkward://rhelpbase/library/rgeos/html/misc-gBuffer.html
+help::::rkward://rhelpbase/library/rgeos/html/topo-bin-gIntersection.html
+help::::rkward://rhelpbase/library/rgeos/html/pred-binary-gIntersects.html
+script::::file:///home/dainius/git/geoscripting/Lesson6/src/OpenNetherlandsSHP.r
+help::::rkward://rhelpbase/library/graphics/html/text.html
+help::::rkward://rhelpbase/library/sp/html/coordinates.html
+help::::rkward://rhelpbase/library/base/html/dimnames.html
 workspace::sidebar,0::
 commandlog::sidebar,3::
 filebrowser::sidebar,0::
