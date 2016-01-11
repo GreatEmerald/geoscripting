@@ -13,7 +13,7 @@ download.file("http://www.mapcruzin.com/download-shapefile/netherlands-railways-
 unzip("data/places.zip", exdir="data")
 unzip("data/railways.zip", exdir="data")
 RailwaysFile = "data/railways.shp"
-PlacesFile = "data/railways.shp"
+PlacesFile = "data/places.shp"
 
 # Import files
 RailwaysSHP = readOGR(RailwaysFile, layer = ogrListLayers(RailwaysFile))
@@ -29,3 +29,6 @@ IndustrialRails = subset(RailwaysSHP, type == "industrial")
 
 # Buffer of a kilometre
 RailSurroundings = gBuffer(IndustrialRails, byid = TRUE, width = 1000)
+
+# Find intersecting places
+RailNeighbours = gIntersection(RailSurroundings, PlacesSHP, byid = TRUE)
