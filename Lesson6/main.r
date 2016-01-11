@@ -16,3 +16,7 @@ PlacesFile = "data/railways.shp"
 
 # Import files
 RailwaysSHP = readOGR(RailwaysFile, layer = ogrListLayers(RailwaysFile))
+PlacesSHP = readOGR(PlacesFile, layer = ogrListLayers(PlacesFile))
+
+# Select industrial railways
+IndustrialRails = subset(RailwaysSHP, type == "industrial")
