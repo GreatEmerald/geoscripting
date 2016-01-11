@@ -32,3 +32,8 @@ RailSurroundings = gBuffer(IndustrialRails, byid = TRUE, width = 1000)
 
 # Find intersecting places
 RailNeighbours = gIntersection(RailSurroundings, PlacesSHP, byid = TRUE)
+
+# Plot
+plot(RailSurroundings, axes=TRUE)
+plot(IndustrialRails, add=TRUE, col="red")
+plot(RailNeighbours, add=TRUE, pch=15)
