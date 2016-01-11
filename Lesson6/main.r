@@ -34,3 +34,19 @@ RailNeighbours = gIntersection(RailSurroundings, PlacesSHP, byid = TRUE)
 plot(RailSurroundings, axes=TRUE)
 plot(IndustrialRails, add=TRUE, col="red")
 plot(RailNeighbours, add=TRUE, pch=15)
+
+#get 5973 from RailNeighbours
+CityID = as.numeric(strsplit(dimnames(RailNeighbours@coords)[[1]], " ")[[1]][2])
+
+#extract population and name from 5973
+CityInfo = tail(head(PlacesSHP@data, CityID), 1)
+
+#Add the city name onto the plot
+text(RailNeighbours$x, RailNeighbours$y, labels = CityInfo[[2]])
+
+#prints the city ID, city name, and population
+print(CityInfo[c("name", "population")])
+
+# Name of the city: Utrecht, population: 100000
+
+
