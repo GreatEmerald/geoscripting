@@ -20,18 +20,8 @@ NLadm <- getData('GADM', country='NLD', level=2, path="data")
 # Reproject vector to raster CRS
 NLadm = spTransform(NLadm, CRS(proj4string(ModisData)))
 
-# Find the greenest city
-# Visualise results
-
-# How green is Wageningen?
-GetGreennessIndex(ModisData, NLadm[NLadm@data$NAME_2 == "Wageningen",], 1:12)
-GetGreennessIndex(ModisData, NLadm[NLadm@data$NAME_2 == "Wageningen",], 1)
-GetGreennessIndex(ModisData, NLadm[NLadm@data$NAME_2 == "Wageningen",], 8)
-
+# Find the greenest city!
 # Note: a lot of data to process, this may take a while!
-Winner1 = GetGreenestArea(ModisData, NLadm, 1)
-PlotGreenestCity(Winner1$Winner, NLadm, ModisData)
-Winner8 = GetGreenestArea(ModisData, NLadm, 8)
-PlotGreenestCity(Winner8$Winner, NLadm, ModisData)
-WinnerAll = GetGreenestArea(ModisData, NLadm, 1:12)
-PlotGreenestCity(WinnerAll$Winner, NLadm, ModisData)
+FindGreenestCity(ModisData, NLadm, 1) # January
+FindGreenestCity(ModisData, NLadm, 8) # August
+FindGreenestCity(ModisData, NLadm, 1:12) # The whole year
