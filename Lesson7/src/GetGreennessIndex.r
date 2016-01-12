@@ -11,3 +11,10 @@ GetGreennessIndex = function(NDVI, area, months)
     NDVImask = mask(NDVI, area)
     return(mean(NDVImask[[months]]@data@values, na.rm=TRUE))
 }
+
+GetGreenestArea = function()
+{
+    GreenRatings = sapply(seq_len(nrow(NLadm)), function(i) GetGreennessIndex(ModisData, NLadm[i,], 1))
+    Winner = which(GreenRatings == max(GreenRatings))
+    return(NLadm[Winner,])
+}
