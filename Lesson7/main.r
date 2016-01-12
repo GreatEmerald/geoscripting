@@ -16,6 +16,9 @@ ModisData[ModisData < 0] = NA
 # Get administrative data
 NLadm <- getData('GADM', country='NLD', level=2, path="data")
 
+# Reproject vector to raster CRS
+NLadm = spTransform(area, CRS(proj4string(ModisData)))
+
 # Find the greenest city
 # Visualise results
 
@@ -25,7 +28,7 @@ GetGreennessIndex(ModisData, NLadm[NLadm@data$NAME_2 == "Wageningen",], 1)
 GetGreennessIndex(ModisData, NLadm[NLadm@data$NAME_2 == "Wageningen",], 8)
 
 # Get a list of indices
-apply(NLadm, 1, GetGreennessIndex, months = 1, NDVI = ModisData)
-GetGreennessIndex(ModisData, NLadm[1:12,], 8)
-
-for(idx in size())
+# This should work. But it doesn't.
+sapply(NLadm, GetGreennessIndex, months = 1, NDVI = ModisData)
+# Workaround!
+sapply(seq_len(nrow(NLadm)), function(i) GetGreennessIndex(ModisData, NLadm[i,], 1))
