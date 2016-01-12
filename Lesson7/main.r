@@ -18,4 +18,14 @@ NLadm <- getData('GADM', country='NLD', level=2, path="data")
 
 # Find the greenest city
 # Visualise results
+
+# How green is Wageningen?
+GetGreennessIndex(ModisData, NLadm[NLadm@data$NAME_2 == "Wageningen",], 1:12)
 GetGreennessIndex(ModisData, NLadm[NLadm@data$NAME_2 == "Wageningen",], 1)
+GetGreennessIndex(ModisData, NLadm[NLadm@data$NAME_2 == "Wageningen",], 8)
+
+# Get a list of indices
+apply(NLadm, 1, GetGreennessIndex, months = 1, NDVI = ModisData)
+GetGreennessIndex(ModisData, NLadm[1:12,], 8)
+
+for(idx in size())
