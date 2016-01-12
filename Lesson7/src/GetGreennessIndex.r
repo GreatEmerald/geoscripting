@@ -4,6 +4,7 @@
 
 library(rgdal)
 
+# Get the greenness index for a single area
 GetGreennessIndex = function(NDVI, area, months)
 {
     print(area)
@@ -12,9 +13,14 @@ GetGreennessIndex = function(NDVI, area, months)
     return(mean(NDVImask[[months]]@data@values, na.rm=TRUE))
 }
 
-GetGreenestArea = function()
+# Get the max greenness index for a country
+GetGreenestArea = function(NDVI, areas, months)
 {
-    GreenRatings = sapply(seq_len(nrow(NLadm)), function(i) GetGreennessIndex(ModisData, NLadm[i,], 1))
+    # This should work. But it doesn't.
+    # sapply(NLadm, GetGreennessIndex, months = 1, NDVI = ModisData)
+    # Workaround!
+    GreenRatings = sapply(seq_len(nrow(areas)), function(i) GetGreennessIndex(NDVI, areas[i,], months))
+    print(paste("The highest NDVI value is:", max(GreenRatings)))
     Winner = which(GreenRatings == max(GreenRatings))
-    return(NLadm[Winner,])
+    return(list(Ratings = GreenRatings, Winner = areas[Winner,]))
 }

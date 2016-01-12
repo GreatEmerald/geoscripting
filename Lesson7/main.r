@@ -4,6 +4,7 @@
 
 library(raster)
 source("src/GetGreennessIndex.r")
+source("src/PlotGreenestCity.r")
 
 # Get NDVI data
 download.file("https://github.com/GeoScripting-WUR/VectorRaster/raw/gh-pages/data/MODIS.zip", destfile="data/modis.zip", method="wget")
@@ -27,11 +28,10 @@ GetGreennessIndex(ModisData, NLadm[NLadm@data$NAME_2 == "Wageningen",], 1:12)
 GetGreennessIndex(ModisData, NLadm[NLadm@data$NAME_2 == "Wageningen",], 1)
 GetGreennessIndex(ModisData, NLadm[NLadm@data$NAME_2 == "Wageningen",], 8)
 
-# Get a list of indices
-# This should work. But it doesn't.
-sapply(NLadm, GetGreennessIndex, months = 1, NDVI = ModisData)
-# Workaround!
 # Note: a lot of data to process, this may take a while!
-GreenRatings = sapply(seq_len(nrow(NLadm)), function(i) GetGreennessIndex(ModisData, NLadm[i,], 1))
-Winner = which(GreenRatings == max(GreenRatings))
-plot(NLadm[Winner,])
+Winner1 = GetGreenestArea(ModisData, NLadm, 1)
+PlotGreenestCity(Winner1$Winner)
+Winner8 = GetGreenestArea(ModisData, NLadm, 8)
+PlotGreenestCity(Winner8$Winner)
+WinnerAll = GetGreenestArea(ModisData, NLadm, 1:12)
+PlotGreenestCity(WinnerAll$Winner)
