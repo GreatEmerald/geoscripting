@@ -39,5 +39,6 @@ FindGreenestCity = function(NDVI, adm, months)
     Rank = data.frame(NDVI = Winner$Ratings, ID = seq_len(length(Winner$Ratings)))
     RankOrder = order(Rank$NDVI, decreasing=TRUE)
     WageningenRank = which(Rank[RankOrder,]$ID == which(adm@data$NAME_2 == "Wageningen"))
-    print(paste("In the list, Wageningen ranks as the", WageningenRank, "greenest city!"))
+    if(length(WageningenRank) > 0)
+        print(paste("In the list, Wageningen ranks as the", WageningenRank, "greenest city!"))
 }

@@ -3,13 +3,14 @@
 # Apache License 2.0
 
 library(raster)
-source("src/GetGreennessIndex.r")
-source("src/PlotGreenestCity.r")
 
 # Clear the environment
 rm(list = ls())
 ## NB: Make sure your working directory is in Lesson7
 getwd()
+
+source("src/GetGreennessIndex.r")
+source("src/PlotGreenestCity.r")
 
 # Get NDVI data
 download.file("https://github.com/GeoScripting-WUR/VectorRaster/raw/gh-pages/data/MODIS.zip", destfile="data/modis.zip", method="wget")
@@ -25,8 +26,17 @@ NLadm <- getData('GADM', country='NLD', level=2, path="data")
 # Reproject vector to raster CRS
 NLadm = spTransform(NLadm, CRS(proj4string(ModisData)))
 
+# Repeat for provinces
+NLpro <- getData('GADM', country='NLD', level=1, path="data")
+NLpro = spTransform(NLpro, CRS(proj4string(ModisData)))
+
 # Find the greenest city!
 # Note: a lot of data to process, this may take a while!
 FindGreenestCity(ModisData, NLadm, 1) # January
 FindGreenestCity(ModisData, NLadm, 8) # August
 FindGreenestCity(ModisData, NLadm, 1:12) # The whole year
+
+# Finds greenest provinces instead:
+FindGreenestCity(ModisData, NLpro, 1) # January
+FindGreenestCity(ModisData, NLpro, 8) # August
+FindGreenestCity(ModisData, NLpro, 1:12) # The whole year
