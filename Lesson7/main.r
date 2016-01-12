@@ -6,6 +6,11 @@ library(raster)
 source("src/GetGreennessIndex.r")
 source("src/PlotGreenestCity.r")
 
+# Clear the environment
+rm(list = ls())
+## NB: Make sure your working directory is in Lesson7
+getwd()
+
 # Get NDVI data
 download.file("https://github.com/GeoScripting-WUR/VectorRaster/raw/gh-pages/data/MODIS.zip", destfile="data/modis.zip", method="wget")
 unzip("data/modis.zip", exdir="data")

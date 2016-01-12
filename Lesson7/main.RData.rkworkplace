@@ -3,9 +3,7 @@ help::::rkward://page/rkward_welcome
 output::::file:///home/dainius/.rkward/rk_out.html
 script::::file:///home/dainius/git/geoscripting/Lesson7/main.r
 script::::file:///home/dainius/git/geoscripting/Lesson7/src/GetGreennessIndex.r
-help::::rkward://rhelpbase/library/raster/html/aggregate.html
-help::::rkward://rhelpbase/library/base/html/lapply.html
-help::::rkward://rhelpbase/library/raster/html/calc.html
+script::::file:///home/dainius/git/geoscripting/Lesson7/src/PlotGreenestCity.r
 workspace::sidebar,0::
 commandlog::sidebar,3::
 filebrowser::sidebar,0::
