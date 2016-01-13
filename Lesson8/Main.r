@@ -28,6 +28,8 @@ load("data/vcfGewata.rda")
 # What can we conclude from this/these plot(s)?
 DataBrick = brick(GewataB1, GewataB2, GewataB3, GewataB4, GewataB5, GewataB7, vcfGewata)
 names(DataBrick) = c("Blue", "Green", "Red", "NIR", "SWIR", "Emission", "VCF")
+# Sanitise data
+DataBrick[["VCF"]][DataBrick[["VCF"]] > 100] = NA
 pairs(DataBrick)
 ## We can conclude that they are all negatively correlated with VCF, except for NIR.
 
@@ -35,10 +37,39 @@ pairs(DataBrick)
 # Which predictors (bands) are probably most important in predicting tree cover?
 DataValues = as.data.frame(getValues(DataBrick))
 LM = lm(VCF ~ Blue + Green + Red + NIR + SWIR + Emission, data=DataValues)
-summary(LM) # All are significant
-drop1(LM) # None can be dropped
+summary(LM) # Emission is insignificant
+step(LM) # Emission can be dropped
+LM = lm(VCF ~ Blue + Green + Red + NIR + SWIR, data=DataValues)
+summary(LM) # Everything is significant
+step(LM) # Nothing can be dropped, the most significant bands are NIR and green
+## NB: a linear model isn't very appropriate, because normality and independence assumptions are violated!
 # Plot the predicted tree cover raster and compare with the original VCF raster.
+BrickSubset = dropLayer(DataBrick, "Emission")
+Prediction = predict(BrickSubset, model=LM, na.rm=TRUE)
+Pred = Prediction
+Pred[Pred < 0] = NA
+hist(Prediction, breaks = 200)
+op = par(mfrow=c(1,2))
+plot(Pred, colNA="black")
+plot(DataBrick[["VCF"]], colNA="black")
+par(op)
 
+hist(DataBrick[["VCF"]])
+
+
+# If we use only independent variables:
+ReducedBrick = dropLayer(DataBrick, "Emission")
+ReducedBrick = dropLayer(ReducedBrick, "Green")
+ReducedBrick = dropLayer(ReducedBrick, "Red")
+ReducedBrick = dropLayer(ReducedBrick, "SWIR")
+pairs(ReducedBrick)
+ReducedLM = lm(VCF ~ Blue + NIR, data=DataValues)
+summary(ReducedLM)
+drop1(ReducedLM)
+plot(ReducedLM)
+RedPrediction = predict(ReducedBrick, model=ReducedLM, na.rm=TRUE)
+hist(RedPrediction, breaks = 200)
+RedPrediction[RedPrediction < 0] = NA
 
 # Compute the RMSE between your predicted and the actual tree cover values. 
 # RMSE <- sqrt(mean((y-y_pred)^2))
