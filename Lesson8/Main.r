@@ -82,7 +82,8 @@ ReducedRMSE = RMSE(getValues(ReducedBrick[["VCF"]]), getValues(RedPrediction))
 # Hint - see ?zonal().
 
 # Unfortunately, zonal() just passes a vector of numbers, not a matrix. So we have to calclate RMSE manually from a difference raster.
-
 trainingRaster = rasterize(trainingPoly, ReducedBrick[["VCF"]], field='Class')
-differenceRaster = overlay(ReducedBrick[["VCF"]], RedPrediction)
-zonal(RedPrediction, trainingRaster, fun="mean")
+differenceRaster = overlay(ReducedBrick[["VCF"]], RedPrediction, fun=function(truth, prediction){(truth-prediction)^2})
+zonestats = zonal(differenceRaster, trainingRaster, fun="mean")
+rownames(zonestats) = levels(trainingPoly@data$Class)
+zonestats
