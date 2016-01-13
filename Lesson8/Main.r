@@ -6,7 +6,7 @@
 library(raster)
 
 # Source
-
+source("src/RMSE.r")
 
 # Download/load information
 download.file("https://github.com/GeoScripting-WUR/AdvancedRasterAnalysis/raw/gh-pages/data/GewataB1.rda", "data/GewataB1.rda", "wget")
@@ -76,8 +76,7 @@ plot(ReducedBrick[["VCF"]], colNA="black")
 par(op)
 
 # Compute the RMSE between your predicted and the actual tree cover values. 
-RMSE = sqrt(mean((getValues(ReducedBrick[["VCF"]])-getValues(RedPrediction))^2, na.rm=TRUE))
-       sqrt(mean( (y                              -y_pred                  )^2) )
+ReducedRMSE = RMSE(getValues(ReducedBrick[["VCF"]]), getValues(RedPrediction))
 # Are the differences between the predicted and actual tree cover the same for all of the 3 classes we used for the random forest classfication? 
 # Using the training polygons from the random forest classification, calculate the RMSE separately for each of the classes and compare. 
 # Hint - see ?zonal().
