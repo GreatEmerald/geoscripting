@@ -6,3 +6,9 @@
 
 
 # Source
+
+
+# Download/load information
+# load("data/GewataB1.rda")
+# load("data/GewataB5.rda")
+# load("data/GewataB7.rda")
