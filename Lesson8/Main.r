@@ -81,3 +81,8 @@ ReducedRMSE = RMSE(getValues(ReducedBrick[["VCF"]]), getValues(RedPrediction))
 # Using the training polygons from the random forest classification, calculate the RMSE separately for each of the classes and compare. 
 # Hint - see ?zonal().
 
+# Unfortunately, zonal() just passes a vector of numbers, not a matrix. So we have to calclate RMSE manually from a difference raster.
+
+trainingRaster = rasterize(trainingPoly, ReducedBrick[["VCF"]], field='Class')
+differenceRaster = overlay(ReducedBrick[["VCF"]], RedPrediction)
+zonal(RedPrediction, trainingRaster, fun="mean")
