@@ -1,0 +1,17 @@
+base::::file:///home/dainius/git/geoscripting/Lesson8
+help::::rkward://page/rkward_welcome
+script::::
+output::::file:///home/dainius/.rkward/rk_out.html
+script::::file:///home/dainius/git/geoscripting/Lesson8/Main.r
+help::::rkward://rhelpbase/library/raster/html/zonal.html
+help::::rkward://rhelpbase/library/graphics/html/pairs.html
+help::::rkward://rhelpbase/library/raster/html/brick.html
+workspace::sidebar,0::
+commandlog::sidebar,3::
+filebrowser::sidebar,0::
+pendingjobs::sidebar,4::
+console::sidebar,3::
+helpsearch::sidebar,3::
+debugframes::sidebar,1::
+debugconsole::sidebar,4::
+rkdebugmessages::sidebar,4::

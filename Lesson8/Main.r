@@ -3,7 +3,7 @@
 # Apache License 2.0
 
 # Needed packages
-
+library(raster)
 
 # Source
 
@@ -15,7 +15,7 @@ download.file("https://github.com/GeoScripting-WUR/AdvancedRasterAnalysis/raw/gh
 download.file("https://github.com/GeoScripting-WUR/AdvancedRasterAnalysis/raw/gh-pages/data/GewataB4.rda", "data/GewataB4.rda", "wget")
 download.file("https://github.com/GeoScripting-WUR/AdvancedRasterAnalysis/raw/gh-pages/data/GewataB5.rda", "data/GewataB5.rda", "wget")
 download.file("https://github.com/GeoScripting-WUR/AdvancedRasterAnalysis/raw/gh-pages/data/GewataB7.rda", "data/GewataB7.rda", "wget")
-download.file("https://github.com/GeoScripting-WUR/AdvancedRasterAnalysis/raw/gh-pages/data/vcfGewata.rda", "data/vfcGewata.rda", "wget")
+download.file("https://github.com/GeoScripting-WUR/AdvancedRasterAnalysis/raw/gh-pages/data/vcfGewata.rda", "data/vcfGewata.rda", "wget")
 load("data/GewataB1.rda")
 load("data/GewataB2.rda")
 load("data/GewataB3.rda")
@@ -26,7 +26,9 @@ load("data/vcfGewata.rda")
 
 # Produce one or more plots that demonstrate the relationship between the Landsat bands and the VCF tree cover. 
 # What can we conclude from this/these plot(s)?
-
+DataBrick = brick(GewataB1, GewataB2, GewataB3, GewataB4, GewataB5, GewataB7, vcfGewata)
+names(DataBrick) = c("Blue", "Green", "Red", "NIR", "SWIR", "Emission", "VCF")
+pairs(DataBrick)
 
 # create an lm() model and show a summary (e.g. using summary()) of the model object you created. 
 # Which predictors (bands) are probably most important in predicting tree cover?
