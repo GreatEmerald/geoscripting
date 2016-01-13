@@ -29,11 +29,14 @@ load("data/vcfGewata.rda")
 DataBrick = brick(GewataB1, GewataB2, GewataB3, GewataB4, GewataB5, GewataB7, vcfGewata)
 names(DataBrick) = c("Blue", "Green", "Red", "NIR", "SWIR", "Emission", "VCF")
 pairs(DataBrick)
+## We can conclude that they are all negatively correlated with VCF, except for NIR.
 
 # create an lm() model and show a summary (e.g. using summary()) of the model object you created. 
 # Which predictors (bands) are probably most important in predicting tree cover?
-
-
+DataValues = as.data.frame(getValues(DataBrick))
+LM = lm(VCF ~ Blue + Green + Red + NIR + SWIR + Emission, data=DataValues)
+summary(LM) # All are significant
+drop1(LM) # None can be dropped
 # Plot the predicted tree cover raster and compare with the original VCF raster.
 
 
