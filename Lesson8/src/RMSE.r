@@ -7,3 +7,7 @@ RMSE = function(truth, prediction)
 {
     return(sqrt(mean((truth-prediction)^2, na.rm=TRUE)))
 }
+
+StratifiedRMSE = function(truth, prediction)
+{
+}
