@@ -34,7 +34,7 @@ DataBrick[["VCF"]][DataBrick[["VCF"]] > 100] = NA
 DataValues = as.data.frame(getValues(DataBrick))
 
 # Create a training raster for RMSE
-trainingRaster = rasterize(trainingPoly, DataBrick[["VCF"]], field='Class', filename="data/trainingRaster.grd")
+trainingRaster = rasterize(trainingPoly, DataBrick[["VCF"]], field='Class', filename="data/trainingRaster.grd", overwrite=TRUE)
 
 
 # Plot relationships
@@ -52,11 +52,11 @@ BrickSubset = dropLayer(DataBrick, "Emission")
 # Plot a histogram of predicted values
 Prediction = predictValidation(BrickSubset, model=LM, na.rm=TRUE, plothist=TRUE)
 # Out of reasonable range, apply a range constraint and compare
-Prediction = predictValidation(BrickSubset, model=LM, na.rm=TRUE, filename="data/PredictionRaster.grd",
+Prediction = predictValidation(BrickSubset, model=LM, na.rm=TRUE, overwrite=TRUE, filename="data/PredictionRaster.grd",
     truthlayer="VCF", range=c(0, +Inf), plotcomparison=TRUE)
 names(Prediction) = "Predicted.LM"
 # Compute the RMSE
-RMSE(getValues(ReducedBrick[["VCF"]]), getValues(Prediction))
+RMSE(getValues(DataBrick[["VCF"]]), getValues(Prediction))
 # RMSE per zone
 zonestats = StratifiedRMSE(DataBrick[["VCF"]], Prediction, trainingRaster, zonenames=levels(trainingPoly@data$Class))
 zonestats
@@ -71,9 +71,9 @@ ReducedBrick = dropLayer(ReducedBrick, "Red")
 ReducedBrick = dropLayer(ReducedBrick, "SWIR")
 
 pairs(ReducedBrick)
-ReducedLM = lmValidate(VCF ~ Blue + NIR, data=DataValues, printstep=TRUE)
+ReducedLM = lmValidation(VCF ~ Blue + NIR, data=DataValues, printstep=TRUE)
 RedPrediction = predictValidation(ReducedBrick, model=ReducedLM, na.rm=TRUE,
-    filename="data/ReducedPredictionRaster.grd", range=c(0, +Inf),
+    filename="data/ReducedPredictionRaster.grd", overwrite=TRUE, range=c(0, +Inf),
     truthlayer="VCF", plothist=TRUE, plotcomparison=TRUE)
 names(RedPrediction) = "Predicted.LM.Blue.NIR"
 RMSE(getValues(ReducedBrick[["VCF"]]), getValues(RedPrediction))
