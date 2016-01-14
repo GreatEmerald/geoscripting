@@ -1,11 +1,9 @@
 base::::file:///home/dainius/git/geoscripting/Lesson8
 help::::rkward://page/rkward_welcome
-script::::
 output::::file:///home/dainius/.rkward/rk_out.html
+script::::file:///home/dainius/git/geoscripting/Lesson8/src/RMSE.r
+script::::file:///home/dainius/git/geoscripting/Lesson8/src/LinearModel.r
 script::::file:///home/dainius/git/geoscripting/Lesson8/Main.r
-help::::rkward://rhelpbase/library/raster/html/zonal.html
-help::::rkward://rhelpbase/library/graphics/html/pairs.html
-help::::rkward://rhelpbase/library/raster/html/brick.html
 workspace::sidebar,0::
 commandlog::sidebar,3::
 filebrowser::sidebar,0::

@@ -5,6 +5,8 @@
 # Needed packages
 library(raster)
 
+rm(list=ls())
+
 # Source
 source("src/RMSE.r")
 source("src/LinearModel.r")
@@ -46,13 +48,12 @@ LM = lmValidation(VCF ~ Blue + Green + Red + NIR + SWIR, data=DataValues, prints
 # Nothing further can be dropped, the most significant bands are NIR and green
 ## NB: a linear model isn't very appropriate, because normality and independence assumptions are violated!
 
-# Plot the predicted tree cover raster and compare with the original VCF raster.
 BrickSubset = dropLayer(DataBrick, "Emission")
 # Plot a histogram of predicted values
 Prediction = predictValidation(BrickSubset, model=LM, na.rm=TRUE, plothist=TRUE)
 # Out of reasonable range, apply a range constraint and compare
-Prediction = predictValidation(BrickSubset, model=LM, na.rm=TRUE, truthlayer="VCF", 
-    range=c(0, +Inf), plotcomparison=TRUE)
+Prediction = predictValidation(BrickSubset, model=LM, na.rm=TRUE, filename="data/PredictionRaster.grd",
+    truthlayer="VCF", range=c(0, +Inf), plotcomparison=TRUE)
 names(Prediction) = "Predicted.LM"
 # Compute the RMSE
 RMSE(getValues(ReducedBrick[["VCF"]]), getValues(Prediction))
@@ -62,7 +63,8 @@ zonestats
 # As a bonus, plot the difference raster
 plot(raster("data/Predicted.LM.grd"))
 
-# If we use only independent variables:
+
+## If we use only independent (not highly correlated) variables for the model:
 ReducedBrick = dropLayer(DataBrick, "Emission")
 ReducedBrick = dropLayer(ReducedBrick, "Green")
 ReducedBrick = dropLayer(ReducedBrick, "Red")
@@ -71,9 +73,11 @@ ReducedBrick = dropLayer(ReducedBrick, "SWIR")
 pairs(ReducedBrick)
 ReducedLM = lmValidate(VCF ~ Blue + NIR, data=DataValues, printstep=TRUE)
 RedPrediction = predictValidation(ReducedBrick, model=ReducedLM, na.rm=TRUE,
-    range=c(0, +Inf), truthlayer="VCF", plothist=TRUE, plotcomparison=TRUE)
+    filename="data/ReducedPredictionRaster.grd", range=c(0, +Inf),
+    truthlayer="VCF", plothist=TRUE, plotcomparison=TRUE)
 names(RedPrediction) = "Predicted.LM.Blue.NIR"
 RMSE(getValues(ReducedBrick[["VCF"]]), getValues(RedPrediction))
-zonestatsR = StratifiedRMSE(DataBrick[["VCF"]], RedPrediction, trainingRaster, zonenames=levels(trainingPoly@data$Class))
+zonestatsR = StratifiedRMSE(DataBrick[["VCF"]], RedPrediction, trainingRaster,
+    zonenames=levels(trainingPoly@data$Class))
 zonestatsR
 plot(raster("data/Predicted.LM.Blue.NIR.grd"))
