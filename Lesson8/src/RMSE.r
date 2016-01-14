@@ -25,12 +25,19 @@ GetDifferenceRaster = function(former, latter, filename=paste("data/", names(lat
         return(raster(filename))
 }
 
-# Unfortunately, zonal() just passes a vector of numbers, not a matrix. So we have to calclate RMSE manually from a difference raster.
+# Calculate RMSE per zone
 StratifiedRMSE = function(truth, prediction, zones, zonenames = "", ...)
 {
+    # Unfortunately, zonal() just passes a vector of numbers, not a matrix.
+    # So we have to calclate RMSE manually from a difference raster.
     differenceRaster = GetDifferenceRaster(truth, prediction, ...)
+    
+    # Get a mean from the zones in the difference raster
     zonestats = zonal(differenceRaster, zones, fun="mean")
+    
+    # Add nice labels, if we have them
     if (length(zonenames) > 1)
         rownames(zonestats) = zonenames
+        
     return(zonestats)
 }
