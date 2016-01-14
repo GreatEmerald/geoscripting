@@ -1,0 +1,230 @@
+---
+title: "Lesson 8"
+author: "Team Rython, Dainius Masiliunas and Tim Weerman"
+date: "January 14, 2016"
+output: html_document
+---
+
+Apache License 2.0 
+
+***
+
+####Needed packages
+```{r message = FALSE}
+library(raster)
+```
+
+***
+
+####Source
+We start with two source lines and right after them the code from those two scripts.
+```{r eval = TRUE}
+source("src/RMSE.r")
+
+```
+Calculate the Root Mean Squared Error.
+```{r eval = FALSE}
+
+RMSE = function(truth, prediction)
+{
+    return(sqrt(mean((truth-prediction)^2, na.rm=TRUE)))
+}
+```
+
+Calculate partial RMSE for different zones by generating squared difference rasters.
+```{r eval = FALSE}
+GetDifferenceRaster = function(former, latter, filename=paste("data/", names(latter), ".grd", sep=""), force=FALSE)
+{
+    # Figure out a reasonable output name
+    if (filename == "data/layer.grd")
+        warning("Please pass filename or assign meaningful names to input rasters! Else the loaded data may not match expectations.")
+    
+    # Create one or load one
+    if (!file.exists(filename) || force)
+    {
+        return(overlay(former, latter, fun=function(truth, prediction){(truth-prediction)^2},
+            filename=filename))
+    }
+    else
+        return(raster(filename))
+}
+```
+Calculate RMSE per zone.
+```{r}
+StratifiedRMSE = function(truth, prediction, zones, zonenames = "", ...)
+{
+    # Unfortunately, zonal() just passes a vector of numbers, not a matrix.
+    # So we have to calclate RMSE manually from a difference raster.
+    differenceRaster = GetDifferenceRaster(truth, prediction, ...)
+    
+    # Get a mean from the zones in the difference raster
+    zonestats = zonal(differenceRaster, zones, fun="mean")
+    
+    # Add nice labels, if we have them
+    if (length(zonenames) > 1)
+        rownames(zonestats) = zonenames
+        
+    return(zonestats)
+}
+```
+
+***
+
+The second source file starts here.
+```{r eval = TRUE}
+source("src/LinearModel.r")
+```
+Creates a linear model and prints its summary, and if desired whether some covariates ought to be removed from the model, and a plot of residuals.
+```{r eval = FALSE}
+lmValidation = function(..., printstep=FALSE, printplot=FALSE)
+{
+    LM = lm(...)
+    print(summary(LM))
+    if (printstep)
+        step(LM)
+    if (printplot)
+        plot(LM)
+    return(LM)
+}
+
+# Creates a prediction based on the model, clamps values to a given range, and
+# if requested plots a histogram and/or a comparison plot between the layers
+predictValidation = function(object, ..., truthlayer = "", range = c(-Inf, +Inf), plothist = FALSE, plotcomparison = FALSE)
+{
+    Prediction = predict(object, ...)
+    Prediction[Prediction < range[1]] = NA
+    Prediction[Prediction > range[2]] = NA
+    if (plothist)
+        hist(Prediction, breaks = 200, main="Histogram of predicted values")
+    if (plotcomparison)
+    {
+        TruthExists = try(class(object[[truthlayer]]))
+        if (class(TruthExists) == "try-error")
+        {
+            warning("Requested a comparison plot, but could not find a layer to compare to!")
+            return(Prediction)
+        }
+        op = par(mfrow=c(1,2))
+        plot(Prediction, colNA="black", main="Predicted values")
+        plot(object[[truthlayer]], colNA="black", main="Ground truth")
+        par(op)
+    }
+    return(Prediction)
+}
+```
+
+***
+
+####Download/load information
+```{r eval= TRUE}
+GetFromWURgit = function(filename)
+{
+    download.file(paste("https://github.com/GeoScripting-WUR/AdvancedRasterAnalysis/raw/gh-pages/data/", filename, sep=""),
+        paste("data/", filename, sep=""), "wget")
+    return(paste("data/", filename, sep=""))
+}
+load(GetFromWURgit("GewataB1.rda"))
+load(GetFromWURgit("GewataB2.rda"))
+load(GetFromWURgit("GewataB3.rda"))
+load(GetFromWURgit("GewataB4.rda"))
+load(GetFromWURgit("GewataB5.rda"))
+load(GetFromWURgit("GewataB7.rda"))
+load(GetFromWURgit("vcfGewata.rda"))
+load(GetFromWURgit("trainingPoly.rda"))  
+
+DataBrick = brick(GewataB1, GewataB2, GewataB3, GewataB4, GewataB5, GewataB7, vcfGewata)
+names(DataBrick) = c("Blue", "Green", "Red", "NIR", "SWIR", "Emission", "VCF")
+```
+
+Sanitise data
+```{r eval= TRUE }
+DataBrick[["VCF"]][DataBrick[["VCF"]] > 100] = NA
+DataValues = as.data.frame(getValues(DataBrick))
+```
+Create a training raster for RMSE
+```{r message = FALSE}
+trainingRaster = rasterize(trainingPoly, DataBrick[["VCF"]], field='Class', filename="data/trainingRaster.grd", overwrite=TRUE)
+```
+
+***
+
+Here we produce plots that demonstrate the relationship between the Landsat bands and the VCF tree cover. 
+```{r eval = TRUE}
+pairs(DataBrick)
+```
+
+From this we can conclude that they are all negatively correlated with VCF, except for NIR. The bands are also highly correlated with each other.
+
+***
+
+
+Here we create a lm() model and show a summary with our own lmValidation()
+```{r eval= TRUE}
+LM = lmValidation(VCF ~ Blue + Green + Red + NIR + SWIR + Emission, data=DataValues, printstep = TRUE)
+```
+Emission can be dropped
+```{r eval= TRUE}
+LM = lmValidation(VCF ~ Blue + Green + Red + NIR + SWIR, data=DataValues, printstep = TRUE)
+```
+Nothing further can be dropped, the most significant bands are NIR and green.  
+NB: a linear model isn't very appropriate, because normality and independence assumptions are violated!  
+
+
+```{r eval = TRUE}
+BrickSubset = dropLayer(DataBrick, "Emission")
+```
+
+***
+
+Here we  predict the values and plot a histogram using the predictValidation().
+```{r eval = TRUE}
+Prediction = predictValidation(BrickSubset, model=LM, na.rm=TRUE, plothist=TRUE)
+```
+
+In the histogram we see that some values are out of range, we apply range constraints to the prediction analysis.  
+The results are plotted below.
+```{r eval = TRUE}
+Prediction = predictValidation(BrickSubset, model=LM, na.rm=TRUE, overwrite=TRUE, filename="data/PredictionRaster.grd",
+    truthlayer="VCF", range=c(0, +Inf), plotcomparison=TRUE)
+names(Prediction) = "Predicted.LM"
+```
+
+Compute the RMSE:
+```{r eval = TRUE}
+RMSE(getValues(DataBrick[["VCF"]]), getValues(Prediction))
+```
+
+RMSE per zone:
+```{r eval = TRUE}
+zonestats = StratifiedRMSE(DataBrick[["VCF"]], Prediction, trainingRaster, zonenames=levels(trainingPoly@data$Class))
+zonestats
+```
+
+As a bonus, plot the difference raster:
+```{r eval = TRUE}
+plot(raster("data/Predicted.LM.grd"))
+```
+
+***
+
+Here we repeat the analysis and only use independent variables:
+```{r eval = TRUE}
+ReducedBrick = dropLayer(DataBrick, "Emission")
+ReducedBrick = dropLayer(ReducedBrick, "Green")
+ReducedBrick = dropLayer(ReducedBrick, "Red")
+ReducedBrick = dropLayer(ReducedBrick, "SWIR")
+
+pairs(ReducedBrick)
+ReducedLM = lmValidation(VCF ~ Blue + NIR, data=DataValues, printstep=TRUE)
+RedPrediction = predictValidation(ReducedBrick, model=ReducedLM, na.rm=TRUE,
+    filename="data/ReducedPredictionRaster.grd", overwrite=TRUE, range=c(0, +Inf),
+    truthlayer="VCF", plothist=TRUE, plotcomparison=TRUE)
+names(RedPrediction) = "Predicted.LM.Blue.NIR"
+RMSE(getValues(ReducedBrick[["VCF"]]), getValues(RedPrediction))
+zonestatsR = StratifiedRMSE(DataBrick[["VCF"]], RedPrediction, trainingRaster,
+    zonenames=levels(trainingPoly@data$Class))
+zonestatsR
+plot(raster("data/Predicted.LM.Blue.NIR.grd"))
+```
+
+***
