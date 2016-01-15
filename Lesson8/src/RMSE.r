@@ -34,6 +34,7 @@ StratifiedRMSE = function(truth, prediction, zones, zonenames = "", ...)
     
     # Get a mean from the zones in the difference raster
     zonestats = zonal(differenceRaster, zones, fun="mean")
+    zonestats[,2] = sqrt(zonestats[,2])
     
     # Add nice labels, if we have them
     if (length(zonenames) > 1)
