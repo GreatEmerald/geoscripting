@@ -16,15 +16,16 @@ os.getcwd()
 os.chdir("/home/tim/geoscripting/Lesson13")
 
 
-# Download the file
-urllib.urlretrieve("https://www.dropbox.com/s/zb7nrla6fqi1mq4/LC81980242014260-SC20150123044700.tar.gz?dl=1"), "data/Netherlands.tar.gz"
-
-
-# Untar the file
 filelist = ["LC81980242014260LGN00_sr_band4.tif", "LC81980242014260LGN00_sr_band5.tif"]
-
-for filename in filelist:
-   os.system("tar -zxvf data/Netherlands.tar.gz -C data " +filename)
+    
+def download():
+    if not os.path.isfile(filelist[0]):
+        # Download the file
+        print "The file is downloading, this can take a while"
+        urllib.urlretrieve("https://www.dropbox.com/s/zb7nrla6fqi1mq4/LC81980242014260-SC20150123044700.tar.gz?dl=1"), "data/Netherlands.tar.gz"
+        # Untar the file
+        for filename in filelist:
+           os.system("tar -zxvf data/Netherlands.tar.gz -C data " +filename)
 
 
 def calculateNDWI(filename4, filename5, output):
@@ -68,6 +69,7 @@ def reprojectNDWI(projinput, projoutput, projection):
     print "\nInformation about the new reprojected file " +projoutput
     print '\nProjection is: ', reprojected.GetProjection()
 
+download()
 calculateNDWI(filelist[0], filelist[1], "data/ndwi.tif")
 reprojectNDWI("data/ndwi.tif", "data/ndwi_ll.tif", "'EPSG:4326'")
 
