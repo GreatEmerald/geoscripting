@@ -1,6 +1,6 @@
 # Lesson 13, NDWI and reprojection in python
 # Team Rython
-# Dainius Masiliunas & TIm Weerman
+# Dainius Masiliunas & Tim Weerman
 # Apache license 2.0
 
 # Import modules
@@ -37,13 +37,9 @@ band5 = dataSource5.GetRasterBand(1).ReadAsArray(0,0,dataSource5.RasterXSize, da
 
 
 # Derive NDWI
-mask = np.not_equal(band5+band4,0)
-
 # Set np.errstate to avoid warning of invalid values (i.e. NaN values) in the divide 
-with np.errstate(invalid='ignore'):
-    ndwi = np.choose(mask,(-99,(band4-band5)/(band4+band5)))
-
-#ndwi = ((band4-band5)/(band4+band5))
+with np.errstate(divide='ignore'):
+    ndwi = ((band4-band5)/(band4+band5))
 
 
 # Save the image
@@ -52,12 +48,17 @@ outDataSet=driver.Create('data/ndwi.tif', dataSource4.RasterXSize, dataSource4.R
 outBand = outDataSet.GetRasterBand(1)
 outBand.WriteArray(ndwi,0,0)
 outBand.SetNoDataValue(-99)
+
+# Set the projection and extent information of the dataset
+outDataSet.SetProjection(dataSource4.GetProjection())
+outDataSet.SetGeoTransform(dataSource4.GetGeoTransform())
+
 outBand.FlushCache()
 outDataSet.FlushCache()
 
 # Current projection is...
-print "\nInformation about " + ndwi 
-print '\nProjection is: ', dataSource.GetProjection()
+print "\nInformation about data/ndwi.tif" 
+print '\nProjection is: ', outDataSet.GetProjection()
 
 
 # Reprojection
@@ -71,4 +72,4 @@ print '\nProjection is: ', reprojected.GetProjection()
 
 
 # End of the script
-print "This is the end of the script"
+print "This is the end of the script, your image has been created."
