@@ -1,6 +1,7 @@
 # Lesson 13, NDWI and reprojection in python
 # Team Rython
 # Dainius Masiliunas & Tim Weerman
+# 20 January 2016
 # Apache license 2.0
 
 # Import modules
@@ -13,7 +14,7 @@ import numpy as np
 # Change working directory
 os.getcwd()
 #os.chdir("Yourworkingdirectory/geoscripting/Lesson13")
-os.chdir("/home/tim/geoscripting/Lesson13")
+#os.chdir("/home/tim/geoscripting/Lesson13")
 
 
 filelist = ["LC81980242014260LGN00_sr_band4.tif", "LC81980242014260LGN00_sr_band5.tif"]
