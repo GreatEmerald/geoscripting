@@ -19,10 +19,10 @@ os.chdir("/home/tim/geoscripting/Lesson13")
 filelist = ["LC81980242014260LGN00_sr_band4.tif", "LC81980242014260LGN00_sr_band5.tif"]
     
 def download():
-    if not os.path.isfile(filelist[0]):
+    if not os.path.isfile("data/" +filelist[0]):
         # Download the file
         print "The file is downloading, this can take a while"
-        urllib.urlretrieve("https://www.dropbox.com/s/zb7nrla6fqi1mq4/LC81980242014260-SC20150123044700.tar.gz?dl=1"), "data/Netherlands.tar.gz"
+        urllib.urlretrieve("https://www.dropbox.com/s/zb7nrla6fqi1mq4/LC81980242014260-SC20150123044700.tar.gz?dl=1", "data/Netherlands.tar.gz")
         # Untar the file
         for filename in filelist:
            os.system("tar -zxvf data/Netherlands.tar.gz -C data " +filename)
@@ -42,6 +42,7 @@ def calculateNDWI(filename4, filename5, output):
     with np.errstate(divide='ignore'):
         ndwi = ((band4-band5)/(band4+band5))
 
+    ndwi[np.isnan(ndwi)] = -99
     # Save the image
     driver = gdal.GetDriverByName('GTiff')
     outDataSet=driver.Create(output, dataSource4.RasterXSize, dataSource4.RasterYSize, 1, GDT_Float32)
