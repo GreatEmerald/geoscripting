@@ -6,10 +6,10 @@ from datetime import date
 from time import *
 import string, os, sys, subprocess, time
 
-APP_KEY = "pVTxrj1SneO2mljiRusj3uevI"
-APP_SECRET = "ZHVoQdNTIydqAPYcLXH0ZyxPSjJlIiD3ioWlq61vQFtxTPsCa1"
-OAUTH_TOKEN = "3015060561-DrLE62RFBiaZkHGO4W7ycJhe6ZGDgqVKY6nEhkL"
-OAUTH_TOKEN_SECRET = "GzvH2FWIK1XSXFuUyIcSApH7vXAoi1vdE02RQTCC1QPCt"
+APP_KEY = ""
+APP_SECRET = ""
+OAUTH_TOKEN = ""
+OAUTH_TOKEN_SECRET = ""
 
 auth = tweepy.OAuthHandler(APP_KEY, APP_SECRET)
 auth.set_access_token(OAUTH_TOKEN, OAUTH_TOKEN_SECRET)
