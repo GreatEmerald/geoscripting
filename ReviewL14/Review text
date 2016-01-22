@@ -1,0 +1,20 @@
+Goodmorning,
+
+After changing the directory three times in your script it ran smoothly. 
+It created the shapefile you intended and the result I got can be seen in the added image.
+Job well done.
+
+An easy to improve feature would be to only let me change the directory once:
+import os
+os.chdir('/home/user/python')
+
+The following parts can then be written as:
+output_file = '/twitter1.csv' 
+with open('/twitter1.csv', 'rb') as csvfile:
+w.save('/twitter1.shp')
+
+You could add some more comments explaining what part does what, and remove the comments that were already in the exercise of lesson14.
+" #do it yourself: enter code her to pull out coordinate  " 
+
+Cheers!
+
