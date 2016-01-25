@@ -51,5 +51,4 @@ tasklist = list(
     annualQrt75 <- annualSummary(s, fun=quartile3, na.rm=TRUE, filename="data/yearly/AnnualQuartile75.grd", progress="text")
     annualMax <- annualSummary(s, fun=max, na.rm=TRUE, filename="data/yearly/AnnualMax.grd", progress="text")
 )
-
-stats <- mclapply(tasklist, function(f) f(), mc.cores = 4)
+system.time(stats <- mclapply(tasklist, function(f) f(), mc.cores = 4))
