@@ -29,15 +29,17 @@ s <- timeStackMODIS(x="data/processed", pattern=glob2rx("*.tif"), filename=stack
 
 # Create annual summary statistics: mean, median, 3rd quartile, max
 years = 2002:2015
-annualMed <- annualSummary(s, fun=median, na.rm=TRUE, mc.cores=4, filename="data/processed/AnnualMedian.grd")
+annualMed <- annualSummary(s, fun=median, na.rm=TRUE, mc.cores=4, filename="data/yearly/AnnualMedian.grd")
 names(annualMed) = years
 plot(annualMed)
-annualAvg <- annualSummary(s, fun=mean, na.rm=TRUE, mc.cores=4, filename="data/processed/AnnualAverage.grd")
+annualAvg <- annualSummary(s, fun=mean, na.rm=TRUE, mc.cores=4, filename="data/yearly/AnnualAverage.grd")
 plot(annualAvg)
-annualQrt75 <- annualSummary(s, fun=quantile, probs=c(0.75), na.rm=TRUE, mc.cores=4, filename="data/processed/AnnualQuartile75.grd")
+quartile3 = function(...) quantile(..., probs=c(0.75))
+annualQrt75 <- annualSummary(s, fun=quartile3, na.rm=TRUE, mc.cores=4, filename="data/yearly/AnnualQuartile75.grd")
 plot(annualQrt75)
-annualQnt90 <- annualSummary(s, fun=quantile, probs=c(0.90), na.rm=TRUE, mc.cores=4, filename="data/processed/AnnualQuantile90.grd")
+quantile90 = function(...) quantile(..., probs=c(0.90))
+annualQnt90 <- annualSummary(s, fun=quantile90, na.rm=TRUE, mc.cores=4, filename="data/yearly/AnnualQuantile90.grd")
 names(annualQnt90) = years
 plot(annualQnt90)
-annualMax <- annualSummary(s, fun=max, na.rm=TRUE, mc.cores=4, filename="data/processed/AnnualMax.grd")
+annualMax <- annualSummary(s, fun=max, na.rm=TRUE, mc.cores=4, filename="data/yearly/AnnualMax.grd")
 plot(annualMax)
