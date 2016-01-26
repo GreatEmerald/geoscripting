@@ -7,7 +7,7 @@
 # filename: path to CSV file
 # names: pretty column names for the resulting data frame
 # Returns a data frame in the "long" format
-ImportStatistics = function(filename="data/Exported_matrix_table.csv", names=c("Municipality", "Year", "Forest_Coverage"))
+ImportStatistics = function(filename="data/Exported_matrix_table.csv", names=c("Municipality", "Year", "Forest_Coverage"), sanitise=TRUE)
 {
     # Import statistics
     statistics = read.csv(filename)
@@ -26,6 +26,31 @@ ImportStatistics = function(filename="data/Exported_matrix_table.csv", names=c("
     }
 
     # Remove all the years that have No values at all (1993, 1998, 2001, 2003, 2015)
-    statistics = statistics[!is.na(statistics$Forest_Coverage),]
+    statistics = statistics[!is.na(statistics[[names[3]]]),]
+    
+    # Regenerate levels
+    statistics[[names[1]]] = factor(statistics[[names[1]]])
+    
+    if(sanitise)
+    {
+        # Remove city and town municipalities - no LAI there
+        statistics = statistics[!grepl("c. mun.", statistics$Municipality, fixed=TRUE),]
+        statistics = statistics[!grepl("t. mun.", statistics$Municipality, fixed=TRUE),]
+        # Remove "d. mun." and "mun.", that's no longer useful
+        MunSearchReplace = function(search, replace, statistics)
+        {
+            return(gsub(search, replace, statistics[["Municipality"]], fixed=TRUE))
+        }
+        statistics[["Municipality"]] = MunSearchReplace(" d. mun.", "", statistics)
+        statistics[["Municipality"]] = MunSearchReplace(" mun.", "", statistics)
+        # Replace Lithuanian letters with Latin letters
+        ltletters = c("ą", "č", "ę", "ė", "į", "š", "ų", "ū", "ž", "Ą", "Č", "Ę", "Ė", "Į", "Š", "Ų", "Ū", "Ž")
+        laletters = c("a", "c", "e", "e", "i", "s", "u", "u", "z", "A", "C", "E", "E", "I", "S", "U", "U", "Z")
+        for(i in 1:length(ltletters))
+        {
+            statistics[["Municipality"]] = MunSearchReplace(ltletters[i], laletters[i], statistics)
+        }
+    }
+    
     return(statistics)
 }
