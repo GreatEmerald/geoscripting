@@ -37,7 +37,7 @@ for( i in 1:nrow(statistics))
 # Remove all the years that have No values at all (1993, 1998, 2001, 2003, 2015)
 statistics = statistics[!is.na(statistics$Forest_Coverage_in_Percent),]
 
-# Plot all the data
+# Plot all the statistical data
 xyplot(Forest_Coverage_in_Percent~ Year|Municipality, data=statistics)
 
 # Levels
@@ -51,13 +51,5 @@ for(i in levels(statistics$Municipality))
   plot(Forest_Coverage_in_Percent~ Year, data=statistics[statistics$Municipality==i,], main = i, type = "l", ylim=c(0,100))
   dev.off()
 }
-
-
-content <- as.character(tagList(tags$img(src="/home/tim/geoscripting/Project/Presentation/ToManyImages/ Akmenė d. mun. .svg")))
-
-leaflet() %>% addTiles() %>%
-  addPopups(-122.327298, 47.597131, content,
-            options = popupOptions(closeButton = FALSE)
-  )
 
 
