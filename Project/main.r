@@ -74,7 +74,6 @@ LAI_Avg_LT = ExtractWithinBorders(AnnualAvg, LTU0, "LAI_Avg", years, filename="o
 LAI_Avg_LT[["Municipality"]]="Republic of Lithuania"
 
 LAI_Avg_Mun = ExtractWithinBorders(AnnualAvg, LTU2, "LAI_Avg", years, filename="output/dataframes/LAI_Avg_Mun.csv", ids=SanitiseNames(LTU2@data$VARNAME_2))
-names(LAI_Avg_Mun) = c("ID", "Year", "LAI", "Municipality")
 
 LAILTU = rbind(LAI_Avg_LT, LAI_Avg_Mun)
 
