@@ -9,6 +9,7 @@ library(lattice)
 source("src/GenerateAnnualSummary.r")
 source("src/ImportStatistics.r")
 source("src/SanitiseInput.r")
+source("src/ExtractWithinBorders.r")
 
 filelist = read.csv("data/data_url_script_2016-01-15_032836.txt")
 filename = "data/MCD15A2H.A2015201.h19v03.006.2015304024904.hdf"
@@ -69,24 +70,13 @@ Summary = summaryBrick(s, fun=mean)
 LTU0 = getData("GADM", country="LTU", path="data", level=0)
 LTU2 = getData("GADM", country="LTU", path="data", level=2)
 
-LAILTU0 = extract(AnnualAvg, LTU0, fun=mean, df=TRUE, na.rm=TRUE)
-save(LAILTU0, file="output/dataframes/LAILTU0.Rda")
-load("output/dataframes/LAILTU0.Rda")
-LAILTU0 = reshape(LAILTU0, direction="long", varying=list(names(LAILTU0)[2:15]), idvar="Municipality", v.names="LAI", timevar="Year", times=years)
-LAILTU0[["Municipality"]]="Republic of Lithuania"
-plot(unlist(LAILTU)[-1]~years)
+LAI_Avg_LT = ExtractWithinBorders(AnnualAvg, LTU0, "LAI_Avg", years, filename="output/dataframes/LAI_Avg_LT.csv")
+LAI_Avg_LT[["Municipality"]]="Republic of Lithuania"
 
-LAILTU2 = extract(AnnualAvg, LTU2, fun=mean, df=TRUE, na.rm=TRUE)
-save(LAILTU2, file="output/dataframes/LAILTU2.Rda")
-load("output/dataframes/LAILTU2.Rda")
-LAILTU2 = cbind(LAILTU2, SanitiseNames(LTU2@data$VARNAME_2))
-names(LAILTU2) = c("ID", years, "Municipality")
-plot(LAILTU2)
+LAI_Avg_Mun = ExtractWithinBorders(AnnualAvg, LTU2, "LAI_Avg", years, filename="output/dataframes/LAI_Avg_Mun.csv", ids=SanitiseNames(LTU2@data$VARNAME_2))
+names(LAI_Avg_Mun) = c("ID", "Year", "LAI", "Municipality")
 
-LAILTU2 = reshape(LAILTU2, direction="long", varying=list(names(LAILTU2)[2:15]), idvar="Municipality", v.names="LAI", timevar="Year", times=years)
-names(LAILTU2) = c("ID", "Municipality", "Year", "LAI")
-
-LAILTU = rbind(LAILTU0, LAILTU2)
+LAILTU = rbind(LAI_Avg_LT, LAI_Avg_Mun)
 
 # Read statistics from the government
 statistics = ImportStatistics()
