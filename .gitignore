@@ -1,2 +1,5 @@
 *.hdf
 *.aux.xml
+?esson*
+Project/Presentation/*ManyImage*
+
