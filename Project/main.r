@@ -71,17 +71,25 @@ LTU2 = getData("GADM", country="LTU", path="data", level=2)
 
 LAILTU0 = extract(AnnualAvg, LTU0, fun=mean, df=TRUE, na.rm=TRUE)
 save(LAILTU0, file="output/dataframes/LAILTU0.Rda")
+load("output/dataframes/LAILTU0.Rda")
+LAILTU0 = reshape(LAILTU0, direction="long", varying=list(names(LAILTU0)[2:15]), idvar="Municipality", v.names="LAI", timevar="Year", times=years)
+LAILTU0[["Municipality"]]="Republic of Lithuania"
 plot(unlist(LAILTU)[-1]~years)
+
 LAILTU2 = extract(AnnualAvg, LTU2, fun=mean, df=TRUE, na.rm=TRUE)
 save(LAILTU2, file="output/dataframes/LAILTU2.Rda")
-LAILTU2 = cbind(LAILTU2, LTU2@data$VARNAME_2)
+load("output/dataframes/LAILTU2.Rda")
+LAILTU2 = cbind(LAILTU2, SanitiseNames(LTU2@data$VARNAME_2))
+names(LAILTU2) = c("ID", years, "Municipality")
 plot(LAILTU2)
 
-LAILTU = reshape(LAILTU2, direction="long", varying=list(names(LAILTU2)[2:15]), idvar="LTU2@data$VARNAME_2", v.names="LAI", timevar="Year", times=years)
-names(LAILTU) = c("ID", "Municipality", "Year", "LAI")
+LAILTU2 = reshape(LAILTU2, direction="long", varying=list(names(LAILTU2)[2:15]), idvar="Municipality", v.names="LAI", timevar="Year", times=years)
+names(LAILTU2) = c("ID", "Municipality", "Year", "LAI")
+
+LAILTU = rbind(LAILTU0, LAILTU2)
 
 # Read statistics from the government
 statistics = ImportStatistics()
 
 # Merge the two data frames into one
-SanitiseNames(LAILTU[["Municipality"]])
+Dataset = merge(LAILTU, statistics, by=c("Municipality", "Year"))
