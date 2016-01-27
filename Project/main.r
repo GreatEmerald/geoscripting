@@ -12,6 +12,7 @@ source("src/SanitiseInput.r")
 source("src/ExtractWithinBorders.r")
 
 filelist = read.csv("data/data_url_script_2016-01-15_032836.txt")
+
 filename = "data/MCD15A2H.A2015201.h19v03.006.2015304024904.hdf"
 # Magic numbers!
 filtermask = 0x8C # Filter out dead detectors, clouds, and non-produced pixels
@@ -71,6 +72,7 @@ Summary = summaryBrick(s, fun=mean)
 LTU0 = getData("GADM", country="LTU", path="data", level=0)
 LTU2 = getData("GADM", country="LTU", path="data", level=2)
 
+# If you just want to load the data from CSVs, replace with StatRasters = 1:5
 StatRasters = c(AnnualAvg, AnnualMed, AnnualQrt75, AnnualQnt90, AnnualMax)
 StatColNames = c("LAI_Avg", "LAI_Med", "LAI_Q75", "LAI_Q90", "LAI_Max")
 AdmData = c(LTU0, LTU2)

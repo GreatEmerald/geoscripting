@@ -2,11 +2,15 @@
 # Date: January 2016
 # License: Apache License 2.0
 
-# A function to return the first element from the list, while fixing a pretty silly typo in GADM.
+# A function to return the first element from the list, while fixing two pretty silly typos in GADM.
 TypoFix = function(words)
 {
     if(words[1] == "Kedinai")
         return("Kedainiai")
+    if(words[1] == "Mazeikai")
+        return("Mazeikiai")
+    if(words[1] == "Raseinai")
+        return("Raseiniai")
     return(words[1])
 }
 

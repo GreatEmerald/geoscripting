@@ -35,13 +35,13 @@ ImportStatistics = function(filename="data/Exported_matrix_table.csv", names=c("
     {
         # Remove city and town municipalities - no LAI there
         statistics = statistics[!grepl("c. mun.", statistics$Municipality, fixed=TRUE),]
-        statistics = statistics[!grepl("t. mun.", statistics$Municipality, fixed=TRUE),]
         # Remove "d. mun." and "mun.", that's no longer useful
         MunSearchReplace = function(search, replace, statistics)
         {
             return(gsub(search, replace, statistics[["Municipality"]], fixed=TRUE))
         }
         statistics[["Municipality"]] = MunSearchReplace(" d. mun.", "", statistics)
+        statistics[["Municipality"]] = MunSearchReplace(" t. mun.", "", statistics)
         statistics[["Municipality"]] = MunSearchReplace(" mun.", "", statistics)
         # Replace Lithuanian letters with Latin letters
         ltletters = c("ą", "č", "ę", "ė", "į", "š", "ų", "ū", "ž", "Ą", "Č", "Ę", "Ė", "Į", "Š", "Ų", "Ū", "Ž")
