@@ -108,19 +108,23 @@ statistics = ImportStatistics()
 
 # Merge the two data frames into one
 Dataset = merge(LAIData, statistics, by=c("Municipality", "Year"))
+write.table(Dataset, file="output/dataframes/Dataset.csv")
 
 ## Generate plots ##
 
-MakePlotSVGs(Dataset, "output/SVG")
+svgdir = file.path("output", "SVG")
+MakePlotSVGs(Dataset, svgdir)
 
 ## Generate a Leaflet HTML ##
 
-Leaflet = GetMunicipalityLeaflet(LTU0, LTU2, "output/SVG")
-saveWidget(Leaflet, file=file.path(getwd(), "output","html","Municipalities.html"), selfcontained=FALSE)
+htmldir = file.path(getwd(), "output", "html")
+Leaflet = GetMunicipalityLeaflet(LTU0, LTU2, svgdir)
+saveWidget(Leaflet, file=file.path(htmldir, "Municipalities.html"), selfcontained=FALSE)
 
 ## Done. ##
 ## Note: Leaflet is a bit silly with popup widths; manually fix that by injecting CSS (optional) ##
 wd = getwd()
-setwd(file.path(wd, "output", "html"))
+setwd(htmldir)
 system("./addcss.sh")
+system("firefox Municipalities.html")
 setwd(wd)
