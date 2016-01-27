@@ -76,38 +76,24 @@ StatColNames = c("LAI_Avg", "LAI_Med", "LAI_Q75", "LAI_Q90", "LAI_Max")
 AdmData = c(LTU0, LTU2)
 AdmPostfix = c("LT", "Mun")
 AdmNames = list(c("Republic of Lithuania"), SanitiseNames(LTU2@data$VARNAME_2))
-for (n in length(AdmData))
+rm(LAIData)
+for (n in 1:length(AdmData))
 {
-    for (i in length(StatRasters))
+    for (i in 1:length(StatRasters))
     {
-        Extracted = ExtractWithinBorders(StatRasters[i], LTU0, StatColNames[i], years, ids=AdmNames[[n]],
+        Extracted = ExtractWithinBorders(StatRasters[[i]], AdmData[[n]], StatColNames[i], years, ids=AdmNames[[n]],
             filename=paste("output/dataframes/", StatColNames[i], "_", AdmPostfix[n], ".csv", sep=""))
         if (!exists("StatData"))
-        {
             StatData = Extracted
-        }
         else
-        {
-            StatData = merge(StatData, Extracted, by=c("Municipality", "Year"))
-        }
+            StatData = merge(StatData, Extracted)
     }
     if (!exists("LAIData"))
-    {
         LAIData = StatData
-    }
     else
-    {
         LAIData = rbind(LAIData, StatData)
-    }
-    rm(StatData)
+    rm(StatData, Extracted)
 }
-
-LAI_Avg_LT = ExtractWithinBorders(AnnualAvg, LTU0, "LAI_Avg", years, filename="output/dataframes/LAI_Avg_LT.csv")
-LAI_Avg_LT[["Municipality"]]="Republic of Lithuania"
-
-LAI_Avg_Mun = ExtractWithinBorders(AnnualAvg, LTU2, "LAI_Avg", years, filename="output/dataframes/LAI_Avg_Mun.csv", ids=SanitiseNames(LTU2@data$VARNAME_2))
-
-LAILTU = rbind(LAI_Avg_LT, LAI_Avg_Mun)
 
 # Read statistics from the government
 statistics = ImportStatistics()
