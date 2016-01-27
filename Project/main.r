@@ -99,4 +99,4 @@ for (n in 1:length(AdmData))
 statistics = ImportStatistics()
 
 # Merge the two data frames into one
-Dataset = merge(LAILTU, statistics, by=c("Municipality", "Year"))
+Dataset = merge(LAIData, statistics, by=c("Municipality", "Year"))
