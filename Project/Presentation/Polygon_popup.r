@@ -7,9 +7,7 @@ library(raster)
 library(leaflet)
 
 testcase = "<img src='file:///home/tim/geoscripting/Project/Presentation/pre-processing.png' height='400' width='400'></img>"
-leaflet() %>% addProviderTiles("Thunderforest.Landscape", group = "Topographical") %>%
-  addProviderTiles("OpenStreetMap.Mapnik", group = "Road map") %>%
-  addProviderTiles("Esri.WorldImagery", group = "Satellite") %>% 
+leaflet() %>% addProviderTiles("Esri.WorldImagery", group = "Satellite") %>% 
   addPolygons(data = LTU2, fill = FALSE, stroke = TRUE, color = "#03F", group = "Borders") %>% 
   addPolygons(data = LTU2, fill = TRUE, stroke = FALSE, color = "#f93", 
               popup = paste0(as.character(testcase)), group = "Polygons") %>% 
