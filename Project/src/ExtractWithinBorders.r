@@ -18,6 +18,8 @@ ExtractWithinBorders = function(brick, borders, colname, years, filename="", idv
         Extract = extract(brick, borders, fun=mean, df=TRUE, na.rm=TRUE)
         # Make Year into a column with multiple rows rather than a lot of columns in one row
         Extract = reshape(Extract, direction="long", varying=list(names(Extract)[2:(length(years)+1)]), v.names=colname, timevar="Year", idvar=idvar, times=years, ...)
+        # Divide LAI by 10 as per MODIS manual
+        Extract[[colname]] = Extract[[colname]] / 10.0
         # Save into a CSV so it doesn't have to be recalculated
         write.table(Extract, file=filename)
     }

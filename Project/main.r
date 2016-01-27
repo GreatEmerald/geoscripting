@@ -8,11 +8,17 @@
 library(bfastSpatial)
 library(parallel)
 library(lattice)
+library(htmlwidgets)
 
 source("src/bfastSpatialHelpers.r") # Generate* functions
 source("src/ImportStatistics.r")
 source("src/SanitiseNames.r")
 source("src/ExtractWithinBorders.r")
+source("src/MakePlotSVGs.r")
+source("src/GetMunicipalityLeaflet.r")
+
+## MAKE SURE TO SET THE RIGHT WORKING DIRECTORY ##
+getwd()
 
 ## Data processing ##
 
@@ -102,3 +108,19 @@ statistics = ImportStatistics()
 
 # Merge the two data frames into one
 Dataset = merge(LAIData, statistics, by=c("Municipality", "Year"))
+
+## Generate plots ##
+
+MakePlotSVGs(Dataset, "output/SVG")
+
+## Generate a Leaflet HTML ##
+
+Leaflet = GetMunicipalityLeaflet(LTU0, LTU2, "output/SVG")
+saveWidget(Leaflet, file=file.path(getwd(), "output","html","Municipalities.html"), selfcontained=FALSE)
+
+## Done. ##
+## Note: Leaflet is a bit silly with popup widths; manually fix that by injecting CSS (optional) ##
+wd = getwd()
+setwd(file.path(wd, "output", "html"))
+system("./addcss.sh")
+setwd(wd)
