@@ -35,22 +35,23 @@ s <- timeStackMODIS(x="data/processed", pattern=glob2rx("*.tif"), filename=file.
 s = stack("data/stack/Stack.grd")
 
 # Create annual summary statistics: mean, median, 3rd quartile, max
+# These are not in a loop, because it takes a LONG time to calculate each step!
 years = 2002:2015
-AnnualMed = GenerateAnnualSummary("data/yearly/AnnualMedian.grd", median)
+AnnualMed = GenerateAnnualSummary("data/yearly/AnnualMedian.grd", median, dates=getMODISinfo(names(s))$date)
 names(AnnualMed) = years
 plot(AnnualMed)
-AnnualAvg = GenerateAnnualSummary("data/yearly/AnnualAverage.grd", mean)
+AnnualAvg = GenerateAnnualSummary("data/yearly/AnnualAverage.grd", mean, dates=getMODISinfo(names(s))$date)
 names(AnnualAvg) = years
 plot(AnnualAvg)
 quartile3 = function(...) quantile(..., probs=c(0.75))[[1]]
-AnnualQrt75 = GenerateAnnualSummary("data/yearly/AnnualQuartile75.grd", quartile3)
+AnnualQrt75 = GenerateAnnualSummary("data/yearly/AnnualQuartile75.grd", quartile3, dates=getMODISinfo(names(s))$date)
 names(AnnualQrt75) = years
 plot(AnnualQrt75)
 quantile90 = function(...) quantile(..., probs=c(0.90))[[1]]
-AnnualQnt90 = GenerateAnnualSummary("data/yearly/AnnualQuantile90.grd", quantile90)
+AnnualQnt90 = GenerateAnnualSummary("data/yearly/AnnualQuantile90.grd", quantile90, dates=getMODISinfo(names(s))$date)
 names(AnnualQnt90) = years
 plot(AnnualQnt90)
-AnnualMax = GenerateAnnualSummary("data/yearly/AnnualMax.grd", max)
+AnnualMax = GenerateAnnualSummary("data/yearly/AnnualMax.grd", max, dates=getMODISinfo(names(s))$date)
 names(AnnualMax) = years
 plot(AnnualMax)
 
@@ -69,6 +70,37 @@ Summary = summaryBrick(s, fun=mean)
 # Extract mean of the different statistics at different administrative units
 LTU0 = getData("GADM", country="LTU", path="data", level=0)
 LTU2 = getData("GADM", country="LTU", path="data", level=2)
+
+StatRasters = c(AnnualAvg, AnnualMed, AnnualQrt75, AnnualQnt90, AnnualMax)
+StatColNames = c("LAI_Avg", "LAI_Med", "LAI_Q75", "LAI_Q90", "LAI_Max")
+AdmData = c(LTU0, LTU2)
+AdmPostfix = c("LT", "Mun")
+AdmNames = list(c("Republic of Lithuania"), SanitiseNames(LTU2@data$VARNAME_2))
+for (n in length(AdmData))
+{
+    for (i in length(StatRasters))
+    {
+        Extracted = ExtractWithinBorders(StatRasters[i], LTU0, StatColNames[i], years, ids=AdmNames[[n]],
+            filename=paste("output/dataframes/", StatColNames[i], "_", AdmPostfix[n], ".csv", sep=""))
+        if (!exists("StatData"))
+        {
+            StatData = Extracted
+        }
+        else
+        {
+            StatData = merge(StatData, Extracted, by=c("Municipality", "Year"))
+        }
+    }
+    if (!exists("LAIData"))
+    {
+        LAIData = StatData
+    }
+    else
+    {
+        LAIData = rbind(LAIData, StatData)
+    }
+    rm(StatData)
+}
 
 LAI_Avg_LT = ExtractWithinBorders(AnnualAvg, LTU0, "LAI_Avg", years, filename="output/dataframes/LAI_Avg_LT.csv")
 LAI_Avg_LT[["Municipality"]]="Republic of Lithuania"

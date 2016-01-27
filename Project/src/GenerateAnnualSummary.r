@@ -4,12 +4,12 @@
 
 library(bfastSpatial)
 
-GenerateAnnualSummary = function(filename, fx, mc.cores=4)
+GenerateAnnualSummary = function(filename, fx, mc.cores=4, ...)
 {
     if (!file.exists(filename))
     {
-        print("Calculating annual summary. This may take a LONG time!")
-        return(annualSummary(s, fun=fx, na.rm=TRUE, mc.cores=mc.cores, filename=filename, progress="text"))
+        print("Calculating annual summary. This may take a LONG time! Get a cup of tea in the mean while. Or ten.")
+        return(annualSummary(s, fun=fx, na.rm=TRUE, mc.cores=mc.cores, filename=filename, progress="text", ...))
     }
     else
         return(brick(filename))
