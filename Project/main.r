@@ -36,7 +36,7 @@ filtermask = 0x8C # Filter for dead detectors, clouds, and non-produced pixels
 fillnumber = 249:255 # From the manual
 
 # Process all the data: remove unreliable pixels
-processMODISbatch("data", pattern=glob2rx("*.hdf"), 2, 3, bit=TRUE, QC_val=0x8C, fill=249:255, outdir="data/processed", mc.cores=4)
+processMODISbatch("data", pattern=glob2rx("*.hdf"), 2, 3, bit=TRUE, QC_val=0x8C, fill=fillnumber, outdir="data/processed", mc.cores=4)
 
 # Stack resulting layers
 Stack = GenerateTimeStack(filename=file.path("data", "processed", "Stack.grd"), x="data/processed", pattern=glob2rx("*.tif"))
@@ -44,17 +44,17 @@ Stack = GenerateTimeStack(filename=file.path("data", "processed", "Stack.grd"), 
 # Create annual summary statistics: mean, median, 3rd quartile, max
 # These are not in a loop, because it takes a LONG time to calculate each step!
 years = 2002:2015
-AnnualMed = GenerateAnnualSummary("data/yearly/AnnualMedian.grd", median, dates=getMODISinfo(names(Stack))$date)
+AnnualMed = GenerateAnnualSummary(Stack, "data/yearly/AnnualMedian.grd", median, dates=getMODISinfo(names(Stack))$date)
 names(AnnualMed) = years
-AnnualAvg = GenerateAnnualSummary("data/yearly/AnnualAverage.grd", mean, dates=getMODISinfo(names(Stack))$date)
+AnnualAvg = GenerateAnnualSummary(Stack, "data/yearly/AnnualAverage.grd", mean, dates=getMODISinfo(names(Stack))$date)
 names(AnnualAvg) = years
 quartile3 = function(...) quantile(..., probs=c(0.75))[[1]]
-AnnualQrt75 = GenerateAnnualSummary("data/yearly/AnnualQuartile75.grd", quartile3, dates=getMODISinfo(names(Stack))$date)
+AnnualQrt75 = GenerateAnnualSummary(Stack, "data/yearly/AnnualQuartile75.grd", quartile3, dates=getMODISinfo(names(Stack))$date)
 names(AnnualQrt75) = years
 quantile90 = function(...) quantile(..., probs=c(0.90))[[1]]
-AnnualQnt90 = GenerateAnnualSummary("data/yearly/AnnualQuantile90.grd", quantile90, dates=getMODISinfo(names(Stack))$date)
+AnnualQnt90 = GenerateAnnualSummary(Stack, "data/yearly/AnnualQuantile90.grd", quantile90, dates=getMODISinfo(names(Stack))$date)
 names(AnnualQnt90) = years
-AnnualMax = GenerateAnnualSummary("data/yearly/AnnualMax.grd", max, dates=getMODISinfo(names(Stack))$date)
+AnnualMax = GenerateAnnualSummary(Stack, "data/yearly/AnnualMax.grd", max, dates=getMODISinfo(names(Stack))$date)
 names(AnnualMax) = years
 
 # Alternatively, this can be run in parallel, one statistic per core; uncomment this block for that:
