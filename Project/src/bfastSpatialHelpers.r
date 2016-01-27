@@ -4,6 +4,10 @@
 
 library(bfastSpatial)
 
+# Helper wrapper functions for bfastSpatial functions for loading files if they exist.
+
+# Returns an annual summary RasterBrick that either already has been generated,
+# or generates it from scratch.
 GenerateAnnualSummary = function(filename, fx, mc.cores=4, ...)
 {
     if (!file.exists(filename))
@@ -13,4 +17,13 @@ GenerateAnnualSummary = function(filename, fx, mc.cores=4, ...)
     }
     else
         return(brick(filename))
+}
+
+# Returns a RasterStack that either has already been stacked, or generates it from scratch.
+GenerateTimeStack = function(filename, ...)
+{
+    if (!file.exists(filename))
+        stack = timeStackMODIS(filename=filename, datatype='INT1U', progress="text", ...)
+    else
+        stack = stack(filename)
 }

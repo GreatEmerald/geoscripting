@@ -14,8 +14,11 @@ ExtractWithinBorders = function(brick, borders, colname, years, filename="", idv
     if (!file.exists(filename) || overwrite)
     {
         print(paste("Extracting data for", colname,"and saving it. This may take a few minutes."))
+        # Extract information
         Extract = extract(brick, borders, fun=mean, df=TRUE, na.rm=TRUE)
+        # Make Year into a column with multiple rows rather than a lot of columns in one row
         Extract = reshape(Extract, direction="long", varying=list(names(Extract)[2:(length(years)+1)]), v.names=colname, timevar="Year", idvar=idvar, times=years, ...)
+        # Save into a CSV so it doesn't have to be recalculated
         write.table(Extract, file=filename)
     }
     else
