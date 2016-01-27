@@ -12,6 +12,7 @@ miniY2= min(Dataset$LAI_Avg)
 
 for(i in levels(factor(Dataset$Municipality)))
 {
+  svg(paste("Presentation/ToManyImages/", i, ".svg", sep=""))
   par(mar=c(5,4,4,5)+.1)
   plot(Forest_Coverage~ Year, data=Dataset[Dataset$Municipality==i,], type="l",col="red", main=i, ylim=c(miniY1, maxiY1))
   par(new=TRUE)
@@ -19,6 +20,5 @@ for(i in levels(factor(Dataset$Municipality)))
   axis(4)
   mtext("LAI_ave",side=4,line=3)
   legend("topleft",col=c("red","blue"),lty=1,legend=c("Forest_Coverage","LAI_ave"))
+  dev.off()
 }
-
-
