@@ -44,6 +44,7 @@ Stack = GenerateTimeStack(filename=file.path("data", "processed", "Stack.grd"), 
 
 # Create annual summary statistics: mean, median, 3rd quartile, max
 # These are not in a loop, because it takes a LONG time to calculate each step!
+# Long as in HOURS! Even with the reduced dataset, somehow! Pass mc.cores if you have more than 4 cores.
 years = 2002:2015
 AnnualMed = GenerateAnnualSummary(Stack, "data/yearly/AnnualMedian.grd", median, dates=getMODISinfo(names(Stack))$date)
 names(AnnualMed) = years
@@ -154,6 +155,25 @@ SmallSummary = crop(Summary, spTransform(LTU0, Summary@crs))
 htmldir = file.path(getwd(), "output", "html")
 Leaflet = GetMunicipalityLeaflet(LTU0, LTU2, SmallSummary, svgdir=svgdir)
 saveWidget(Leaflet, file=file.path(htmldir, "Municipalities.html"), selfcontained=FALSE)
+
+## Look at some statistics
+DatLT = subset(Dataset, Municipality=="Republic of Lithuania")
+DatMun = subset(Dataset, Municipality!="Republic of Lithuania")
+# LAI mean change per year: +0.04 
+summary(lm(LAI_Avg~Year, data=DatLT)) # Whole country
+summary(lm(LAI_Avg~Year, data=DatMun)) # Individual municipalities
+# That's 0.68% per year
+lm(LAI_Avg~Year, data=DatLT)$coefficients[2]/max(Dataset[["LAI_Max"]])*100
+
+# LAI maximum change per year: +0.06
+summary(lm(LAI_Max~Year, data=DatLT)) # Whole country
+summary(lm(LAI_Max~Year, data=DatMun)) # Individual municipalities
+# That's 0.93% per year
+lm(LAI_Max~Year, data=Dataset[Dataset$Municipality=="Republic of Lithuania",])$coefficients[2]/max(Dataset[["LAI_Max"]])*100
+
+# Forest cover change per year: +0.12%
+summary(lm(Forest_Coverage~Year, data=DatLT)) # Whole country
+summary(lm(Forest_Coverage~Year, data=DatMun)) # Individual municipalities
 
 ## Done. ##
 ## Note: Leaflet is a bit silly with popup widths; manually fix that by injecting CSS (optional) ##
